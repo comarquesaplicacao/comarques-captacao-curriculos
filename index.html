@@ -45,6 +45,12 @@
 
         <!-- ETAPA 1 -->
         <fieldset class="step is-active" data-step="1">
+          <!-- honeypot: campo invisível para humanos, bots tendem a preencher -->
+          <div class="honeypot" aria-hidden="true">
+            <label for="site">Não preencha este campo</label>
+            <input type="text" id="site" name="site" tabindex="-1" autocomplete="off">
+          </div>
+
           <div class="field">
             <label for="nomeCompleto">Nome completo *</label>
             <input type="text" id="nomeCompleto" name="nomeCompleto" required autocomplete="name">

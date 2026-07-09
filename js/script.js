@@ -124,6 +124,7 @@ form.addEventListener('submit', async (e) => {
     const base64 = await fileToBase64(file);
 
     const payload = {
+      site: form.site.value, // honeypot - deve chegar vazio se for humano
       nomeCompleto: form.nomeCompleto.value.trim(),
       telefone: form.telefone.value.trim(),
       email: form.email.value.trim(),

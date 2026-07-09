@@ -168,6 +168,15 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+}
+
 .field { margin-bottom: 18px; }
 .field-row {
   display: grid;
