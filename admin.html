@@ -42,6 +42,34 @@
 
     <main class="admin-wrap">
 
+      <!-- gerenciamento de vagas -->
+      <section class="card vagas-card">
+        <div class="table-card-header">
+          <h3>Vagas em aberto</h3>
+        </div>
+
+        <form id="form-nova-vaga" class="nova-vaga-form">
+          <input type="text" id="nova-vaga-titulo" placeholder="Título da nova vaga (ex: Auxiliar administrativo)" required>
+          <button type="submit" class="btn btn-primary">Adicionar vaga</button>
+        </form>
+        <p class="form-msg" id="vaga-msg" role="status"></p>
+
+        <div class="table-scroll">
+          <table id="tabela-vagas">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Status</th>
+                <th>Criada em</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tabela-vagas-corpo"></tbody>
+          </table>
+          <p class="empty-state" id="vagas-empty-state" hidden>Nenhuma vaga cadastrada ainda.</p>
+        </div>
+      </section>
+
       <!-- resumo -->
       <section class="summary-row" id="summary-row"></section>
 

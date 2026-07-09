@@ -1,5 +1,34 @@
 document.getElementById('year').textContent = new Date().getFullYear();
 
+const OPCAO_CADASTRO_GERAL = 'Cadastro geral / Banco de talentos';
+
+async function carregarVagas() {
+  const select = document.getElementById('cargoDesejado');
+  try {
+    const resp = await fetch(`${APPS_SCRIPT_URL}?action=vagasAtivas`);
+    const result = await resp.json();
+    const vagas = (result.ok && result.vagas) ? result.vagas : [];
+
+    select.innerHTML = '<option value="" disabled selected>Selecione</option>';
+    vagas.forEach(vaga => {
+      const opt = document.createElement('option');
+      opt.value = vaga.titulo;
+      opt.textContent = vaga.titulo;
+      select.appendChild(opt);
+    });
+
+    const optGeral = document.createElement('option');
+    optGeral.value = OPCAO_CADASTRO_GERAL;
+    optGeral.textContent = OPCAO_CADASTRO_GERAL;
+    select.appendChild(optGeral);
+  } catch (err) {
+    // Se falhar ao carregar vagas, garante que o formulário continue usável
+    select.innerHTML = `<option value="${OPCAO_CADASTRO_GERAL}" selected>${OPCAO_CADASTRO_GERAL}</option>`;
+  }
+}
+
+carregarVagas();
+
 const form = document.getElementById('form-curriculo');
 const tabs = document.querySelectorAll('.tab');
 const steps = document.querySelectorAll('.step');

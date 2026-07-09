@@ -1,5 +1,6 @@
 let todosCandidatos = [];
 let charts = {};
+let senhaSessao = '';
 
 /* ---------- Login ---------- */
 const loginScreen = document.getElementById('login-screen');
@@ -32,10 +33,12 @@ loginForm.addEventListener('submit', async (e) => {
     }
 
     todosCandidatos = result.candidatos || [];
+    senhaSessao = senha;
     loginScreen.style.display = 'none';
     dashboardScreen.style.display = 'block';
     montarFiltros();
     aplicarFiltros();
+    carregarVagas();
   } catch (err) {
     loginMsg.textContent = 'Erro de conexão. Tente novamente.';
     loginBtn.disabled = false;
@@ -45,6 +48,7 @@ loginForm.addEventListener('submit', async (e) => {
 
 document.getElementById('logout-btn').addEventListener('click', () => {
   todosCandidatos = [];
+  senhaSessao = '';
   dashboardScreen.style.display = 'none';
   loginScreen.style.display = 'flex';
   loginForm.reset();
@@ -297,6 +301,106 @@ function baseOptions(horizontal) {
     }
   };
 }
+
+/* ---------- Gerenciamento de vagas ---------- */
+
+async function chamarApi(payload) {
+  const resp = await fetch(APPS_SCRIPT_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  });
+  return resp.json();
+}
+
+async function carregarVagas() {
+  try {
+    const result = await chamarApi({ acao: 'listarVagas', senha: senhaSessao });
+    if (result.ok) renderVagas(result.vagas || []);
+  } catch (err) {
+    console.error('Erro ao carregar vagas', err);
+  }
+}
+
+function renderVagas(vagas) {
+  const corpo = document.getElementById('tabela-vagas-corpo');
+  const vazio = document.getElementById('vagas-empty-state');
+
+  if (!vagas.length) {
+    corpo.innerHTML = '';
+    vazio.hidden = false;
+    return;
+  }
+  vazio.hidden = true;
+
+  corpo.innerHTML = vagas
+    .slice()
+    .sort((a, b) => new Date(b.dataCriacao) - new Date(a.dataCriacao))
+    .map(v => `
+      <tr>
+        <td>${v.titulo}</td>
+        <td>
+          <select class="status-select status-${v.status}" data-id="${v.id}">
+            <option value="Ativa" ${v.status === 'Ativa' ? 'selected' : ''}>Ativa</option>
+            <option value="Inativa" ${v.status === 'Inativa' ? 'selected' : ''}>Inativa</option>
+            <option value="Fechada" ${v.status === 'Fechada' ? 'selected' : ''}>Fechada</option>
+            <option value="Cancelada" ${v.status === 'Cancelada' ? 'selected' : ''}>Cancelada</option>
+          </select>
+        </td>
+        <td>${formatarData(v.dataCriacao)}</td>
+        <td><button type="button" class="btn-excluir-vaga" data-id="${v.id}">Excluir</button></td>
+      </tr>
+    `).join('');
+
+  corpo.querySelectorAll('.status-select').forEach(select => {
+    select.addEventListener('change', async () => {
+      const id = select.dataset.id;
+      const novoStatus = select.value;
+      select.className = `status-select status-${novoStatus}`;
+      try {
+        await chamarApi({ acao: 'atualizarStatusVaga', senha: senhaSessao, id, status: novoStatus });
+      } catch (err) {
+        alert('Erro ao atualizar status. Tente novamente.');
+      }
+    });
+  });
+
+  corpo.querySelectorAll('.btn-excluir-vaga').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!confirm('Tem certeza que deseja excluir esta vaga?')) return;
+      try {
+        await chamarApi({ acao: 'excluirVaga', senha: senhaSessao, id: btn.dataset.id });
+        carregarVagas();
+      } catch (err) {
+        alert('Erro ao excluir vaga. Tente novamente.');
+      }
+    });
+  });
+}
+
+document.getElementById('form-nova-vaga').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const input = document.getElementById('nova-vaga-titulo');
+  const vagaMsg = document.getElementById('vaga-msg');
+  const titulo = input.value.trim();
+  if (!titulo) return;
+
+  try {
+    const result = await chamarApi({ acao: 'criarVaga', senha: senhaSessao, titulo });
+    if (result.ok) {
+      input.value = '';
+      vagaMsg.className = 'form-msg is-visible is-success';
+      vagaMsg.textContent = 'Vaga adicionada!';
+      carregarVagas();
+    } else {
+      vagaMsg.className = 'form-msg is-visible is-error';
+      vagaMsg.textContent = result.message || 'Erro ao criar vaga.';
+    }
+  } catch (err) {
+    vagaMsg.className = 'form-msg is-visible is-error';
+    vagaMsg.textContent = 'Erro de conexão. Tente novamente.';
+  }
+});
 
 /* ---------- Export CSV ---------- */
 document.getElementById('exportar-csv').addEventListener('click', () => {

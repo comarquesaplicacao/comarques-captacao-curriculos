@@ -210,6 +210,65 @@ tbody tr:hover { background: var(--purple-soft); }
   padding: 30px 0;
 }
 
+.vagas-card { padding: 20px 0 8px; }
+.vagas-card .table-card-header { padding: 0 22px 14px; }
+
+.nova-vaga-form {
+  display: flex;
+  gap: 10px;
+  padding: 0 22px 14px;
+}
+
+.nova-vaga-form input {
+  flex: 1;
+  padding: 10px 13px;
+  border: 1.5px solid #E3DEF2;
+  border-radius: 9px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  background: var(--bg);
+}
+
+.nova-vaga-form input:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px var(--purple-tint);
+}
+
+#vaga-msg { margin: 0 22px 10px; }
+
+.status-select {
+  padding: 6px 10px;
+  border-radius: 7px;
+  border: 1.5px solid #E3DEF2;
+  font-family: 'Inter', sans-serif;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: var(--bg);
+  cursor: pointer;
+}
+
+.status-select.status-Ativa { color: var(--success); border-color: var(--success); }
+.status-select.status-Inativa { color: #A18AE0; border-color: #A18AE0; }
+.status-select.status-Fechada { color: #8A8398; border-color: #D8D3E5; }
+.status-select.status-Cancelada { color: var(--danger); border-color: var(--danger); }
+
+.btn-excluir-vaga {
+  background: transparent;
+  color: var(--danger);
+  border: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 8px;
+}
+
+.btn-excluir-vaga:hover { text-decoration: underline; }
+
+@media (max-width: 560px) {
+  .nova-vaga-form { flex-direction: column; }
+}
+
 @media (max-width: 900px) {
   .summary-row { grid-template-columns: 1fr 1fr; }
   .filters-grid { grid-template-columns: 1fr 1fr; }
