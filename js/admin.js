@@ -32,8 +32,8 @@ loginForm.addEventListener('submit', async (e) => {
     }
 
     todosCandidatos = result.candidatos || [];
-    loginScreen.hidden = true;
-    dashboardScreen.hidden = false;
+    loginScreen.style.display = 'none';
+    dashboardScreen.style.display = 'block';
     montarFiltros();
     aplicarFiltros();
   } catch (err) {
@@ -45,8 +45,8 @@ loginForm.addEventListener('submit', async (e) => {
 
 document.getElementById('logout-btn').addEventListener('click', () => {
   todosCandidatos = [];
-  dashboardScreen.hidden = true;
-  loginScreen.hidden = false;
+  dashboardScreen.style.display = 'none';
+  loginScreen.style.display = 'flex';
   loginForm.reset();
   loginBtn.disabled = false;
   loginBtn.textContent = 'Entrar';
