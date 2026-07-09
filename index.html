@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoMarques · Envie seu currículo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="page">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">CM</span>
+      <span class="brand-name">CoMarques</span>
+    </div>
+    <p class="topbar-tag">Banco de talentos</p>
+  </header>
+
+  <main class="wrap">
+
+    <section class="intro">
+      <h1>Vamos guardar o seu currículo na pasta certa.</h1>
+      <p>Preencha os dados abaixo. Assim que surgir uma oportunidade compatível com o seu perfil, você é um dos primeiros a ser lembrado.</p>
+    </section>
+
+    <div class="folder">
+
+      <!-- abas / progresso -->
+      <div class="tabs" id="tabs">
+        <button class="tab is-active" data-step="1" type="button">
+          <span class="tab-index">1</span> Dados pessoais
+        </button>
+        <button class="tab" data-step="2" type="button">
+          <span class="tab-index">2</span> Perfil profissional
+        </button>
+        <button class="tab" data-step="3" type="button">
+          <span class="tab-index">3</span> Currículo
+        </button>
+      </div>
+
+      <form class="card" id="form-curriculo" novalidate>
+
+        <!-- ETAPA 1 -->
+        <fieldset class="step is-active" data-step="1">
+          <div class="field">
+            <label for="nomeCompleto">Nome completo *</label>
+            <input type="text" id="nomeCompleto" name="nomeCompleto" required autocomplete="name">
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="telefone">Telefone / WhatsApp *</label>
+              <input type="tel" id="telefone" name="telefone" placeholder="(11) 91234-5678" required autocomplete="tel">
+            </div>
+            <div class="field">
+              <label for="email">Email *</label>
+              <input type="email" id="email" name="email" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="dataNascimento">Data de nascimento *</label>
+              <input type="date" id="dataNascimento" name="dataNascimento" required>
+            </div>
+            <div class="field">
+              <label for="estado">Estado *</label>
+              <select id="estado" name="estado" required>
+                <option value="" disabled selected>Selecione</option>
+                <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                <option>SP</option><option>SE</option><option>TO</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="cidade">Cidade *</label>
+              <input type="text" id="cidade" name="cidade" required>
+            </div>
+            <div class="field">
+              <label for="bairro">Bairro *</label>
+              <input type="text" id="bairro" name="bairro" required>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <span></span>
+            <button type="button" class="btn btn-primary" data-next>Continuar</button>
+          </div>
+        </fieldset>
+
+        <!-- ETAPA 2 -->
+        <fieldset class="step" data-step="2">
+          <div class="field">
+            <label for="cargoDesejado">Cargo desejado *</label>
+            <input type="text" id="cargoDesejado" name="cargoDesejado" placeholder="Ex: Auxiliar administrativo" required>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="escolaridade">Nível de escolaridade *</label>
+              <select id="escolaridade" name="escolaridade" required>
+                <option value="" disabled selected>Selecione</option>
+                <option>Fundamental incompleto</option>
+                <option>Fundamental completo</option>
+                <option>Médio incompleto</option>
+                <option>Médio completo</option>
+                <option>Superior incompleto</option>
+                <option>Superior completo</option>
+                <option>Pós-graduação</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="pretensaoSalarial">Pretensão salarial (R$) *</label>
+              <input type="number" id="pretensaoSalarial" name="pretensaoSalarial" min="0" step="50" placeholder="Ex: 1800" required>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="disponibilidade">Disponibilidade de início *</label>
+              <select id="disponibilidade" name="disponibilidade" required>
+                <option value="" disabled selected>Selecione</option>
+                <option>Imediata</option>
+                <option>Em até 15 dias</option>
+                <option>Em até 30 dias</option>
+                <option>A combinar</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Possui veículo próprio? *</label>
+              <div class="radio-group">
+                <label class="radio"><input type="radio" name="veiculoProprio" value="Sim" required> Sim</label>
+                <label class="radio"><input type="radio" name="veiculoProprio" value="Não"> Não</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-ghost" data-prev>Voltar</button>
+            <button type="button" class="btn btn-primary" data-next>Continuar</button>
+          </div>
+        </fieldset>
+
+        <!-- ETAPA 3 -->
+        <fieldset class="step" data-step="3">
+          <div class="field">
+            <label for="arquivo">Anexe seu currículo *</label>
+            <div class="dropzone" id="dropzone">
+              <input type="file" id="arquivo" name="arquivo" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg" required hidden>
+              <div class="dropzone-content" id="dropzone-content">
+                <span class="dropzone-icon">📎</span>
+                <p><strong>Clique para escolher o arquivo</strong> ou arraste aqui</p>
+                <small>PDF, Word ou imagem — até 10&nbsp;MB</small>
+              </div>
+            </div>
+            <p class="file-name" id="file-name"></p>
+          </div>
+
+          <div class="consent">
+            <label class="checkbox">
+              <input type="checkbox" id="consentimento" required>
+              Autorizo o armazenamento dos meus dados e currículo para fins de recrutamento pela CoMarques.
+            </label>
+          </div>
+
+          <p class="form-msg" id="form-msg" role="status"></p>
+
+          <div class="step-actions">
+            <button type="button" class="btn btn-ghost" data-prev>Voltar</button>
+            <button type="submit" class="btn btn-primary" id="btn-submit">
+              <span id="btn-submit-label">Enviar currículo</span>
+            </button>
+          </div>
+        </fieldset>
+
+      </form>
+    </div>
+
+    <p class="footnote">Seus dados são usados exclusivamente para fins de recrutamento e seleção pela CoMarques Consultoria.</p>
+
+  </main>
+
+  <footer class="page-footer">
+    <p>© <span id="year"></span> CoMarques Consultoria</p>
+  </footer>
+
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
