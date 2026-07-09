@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CoMarques · Painel administrativo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- TELA DE LOGIN -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <img src="img/logo-comarques.jpeg" alt="CoMarques" class="login-logo">
+      <h1>Painel administrativo</h1>
+      <p>Acesso restrito à equipe CoMarques.</p>
+      <form id="login-form">
+        <label for="senha">Senha de acesso</label>
+        <input type="password" id="senha" name="senha" autocomplete="current-password" required>
+        <button type="submit" class="btn btn-primary" id="login-btn">Entrar</button>
+        <p class="login-msg" id="login-msg"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- PAINEL -->
+  <div id="dashboard-screen" class="dashboard-screen" hidden>
+
+    <header class="admin-topbar">
+      <div class="brand">
+        <img src="img/logo-comarques.jpeg" alt="CoMarques" class="brand-logo">
+        <span class="brand-name">Painel de candidatos</span>
+      </div>
+      <button class="btn btn-ghost" id="logout-btn">Sair</button>
+    </header>
+
+    <main class="admin-wrap">
+
+      <!-- resumo -->
+      <section class="summary-row" id="summary-row"></section>
+
+      <!-- filtros -->
+      <section class="filters card">
+        <div class="filters-grid">
+          <div class="field">
+            <label for="f-busca">Buscar por nome ou email</label>
+            <input type="text" id="f-busca" placeholder="Digite para buscar...">
+          </div>
+          <div class="field">
+            <label for="f-cargo">Cargo desejado</label>
+            <select id="f-cargo"><option value="">Todos</option></select>
+          </div>
+          <div class="field">
+            <label for="f-estado">Estado</label>
+            <select id="f-estado"><option value="">Todos</option></select>
+          </div>
+          <div class="field">
+            <label for="f-escolaridade">Escolaridade</label>
+            <select id="f-escolaridade"><option value="">Todas</option></select>
+          </div>
+          <div class="field">
+            <label for="f-disponibilidade">Disponibilidade</label>
+            <select id="f-disponibilidade"><option value="">Todas</option></select>
+          </div>
+          <div class="field">
+            <label for="f-de">Enviados de</label>
+            <input type="date" id="f-de">
+          </div>
+          <div class="field">
+            <label for="f-ate">Enviados até</label>
+            <input type="date" id="f-ate">
+          </div>
+          <div class="field field-actions">
+            <button type="button" class="btn btn-ghost" id="limpar-filtros">Limpar filtros</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- gráficos -->
+      <section class="charts-grid">
+        <div class="card chart-card">
+          <h3>Candidatos por cargo desejado</h3>
+          <canvas id="chart-cargo"></canvas>
+        </div>
+        <div class="card chart-card">
+          <h3>Candidatos por faixa etária</h3>
+          <canvas id="chart-idade"></canvas>
+        </div>
+        <div class="card chart-card">
+          <h3>Pretensão salarial por faixa</h3>
+          <canvas id="chart-salario"></canvas>
+        </div>
+        <div class="card chart-card">
+          <h3>Envios por mês</h3>
+          <canvas id="chart-periodo"></canvas>
+        </div>
+      </section>
+
+      <!-- lista -->
+      <section class="card table-card">
+        <div class="table-card-header">
+          <h3>Candidatos <span id="contador-resultado" class="counter-badge"></span></h3>
+          <button type="button" class="btn btn-ghost" id="exportar-csv">Exportar CSV</button>
+        </div>
+        <div class="table-scroll">
+          <table id="tabela-candidatos">
+            <thead>
+              <tr>
+                <th>Envio</th>
+                <th>Nome</th>
+                <th>Contato</th>
+                <th>Local</th>
+                <th>Cargo</th>
+                <th>Idade</th>
+                <th>Pretensão</th>
+                <th>Escolaridade</th>
+                <th>Disponibilidade</th>
+                <th>Veículo</th>
+                <th>Currículo</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-corpo"></tbody>
+          </table>
+          <p class="empty-state" id="empty-state" hidden>Nenhum candidato encontrado com os filtros atuais.</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

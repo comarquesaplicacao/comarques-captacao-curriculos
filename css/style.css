@@ -47,18 +47,12 @@ body {
   gap: 10px;
 }
 
-.brand-mark {
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
-  background: var(--purple);
-  color: white;
-  font-family: 'Sora', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.brand-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
 }
 
 .brand-name {
