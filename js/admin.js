@@ -164,6 +164,7 @@ function renderTabela(lista) {
         <td>${c['Nome Completo'] || ''}</td>
         <td>${c['Email'] || ''}<br><small>${c['Telefone'] || ''}</small></td>
         <td>${c['Cidade'] || ''} / ${c['Estado'] || ''}</td>
+        <td>${c['Bairro'] || ''}</td>
         <td>${c['Cargo Desejado'] || ''}</td>
         <td>${c['Idade'] || ''}</td>
         <td>${c['Pretensão Salarial'] ? 'R$ ' + c['Pretensão Salarial'] : ''}</td>
