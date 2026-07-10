@@ -29,6 +29,45 @@ async function carregarVagas() {
 
 carregarVagas();
 
+/* ---------- Data de nascimento (dia/mês/ano) ---------- */
+const selectDia = document.getElementById('nascDia');
+const selectMes = document.getElementById('nascMes');
+const selectAno = document.getElementById('nascAno');
+
+const ANO_ATUAL = new Date().getFullYear();
+for (let ano = ANO_ATUAL - 14; ano >= ANO_ATUAL - 100; ano--) {
+  const opt = document.createElement('option');
+  opt.value = ano;
+  opt.textContent = ano;
+  selectAno.appendChild(opt);
+}
+
+function diasNoMes(mes, ano) {
+  if (!mes) return 31;
+  return new Date(ano || 2001, Number(mes), 0).getDate();
+}
+
+function atualizarDiasDisponiveis() {
+  const diaAtual = selectDia.value;
+  const totalDias = diasNoMes(selectMes.value, selectAno.value);
+
+  selectDia.innerHTML = '<option value="" disabled selected>Dia</option>';
+  for (let d = 1; d <= totalDias; d++) {
+    const opt = document.createElement('option');
+    opt.value = String(d).padStart(2, '0');
+    opt.textContent = d;
+    selectDia.appendChild(opt);
+  }
+
+  if (diaAtual && Number(diaAtual) <= totalDias) {
+    selectDia.value = diaAtual;
+  }
+}
+
+selectMes.addEventListener('change', atualizarDiasDisponiveis);
+selectAno.addEventListener('change', atualizarDiasDisponiveis);
+atualizarDiasDisponiveis();
+
 const form = document.getElementById('form-curriculo');
 const tabs = document.querySelectorAll('.tab');
 const steps = document.querySelectorAll('.step');
@@ -160,7 +199,7 @@ form.addEventListener('submit', async (e) => {
       estado: form.estado.value,
       cidade: form.cidade.value.trim(),
       bairro: form.bairro.value.trim(),
-      dataNascimento: form.dataNascimento.value,
+      dataNascimento: `${selectAno.value}-${selectMes.value}-${selectDia.value}`,
       cargoDesejado: form.cargoDesejado.value.trim(),
       escolaridade: form.escolaridade.value,
       pretensaoSalarial: form.pretensaoSalarial.value,

@@ -69,8 +69,30 @@
 
           <div class="field-row">
             <div class="field">
-              <label for="dataNascimento">Data de nascimento *</label>
-              <input type="date" id="dataNascimento" name="dataNascimento" required>
+              <label for="nascDia">Data de nascimento *</label>
+              <div class="date-select-group">
+                <select id="nascDia" name="nascDia" required>
+                  <option value="" disabled selected>Dia</option>
+                </select>
+                <select id="nascMes" name="nascMes" required>
+                  <option value="" disabled selected>Mês</option>
+                  <option value="01">Janeiro</option>
+                  <option value="02">Fevereiro</option>
+                  <option value="03">Março</option>
+                  <option value="04">Abril</option>
+                  <option value="05">Maio</option>
+                  <option value="06">Junho</option>
+                  <option value="07">Julho</option>
+                  <option value="08">Agosto</option>
+                  <option value="09">Setembro</option>
+                  <option value="10">Outubro</option>
+                  <option value="11">Novembro</option>
+                  <option value="12">Dezembro</option>
+                </select>
+                <select id="nascAno" name="nascAno" required>
+                  <option value="" disabled selected>Ano</option>
+                </select>
+              </div>
             </div>
             <div class="field">
               <label for="estado">Estado *</label>

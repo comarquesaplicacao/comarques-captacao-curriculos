@@ -177,6 +177,16 @@ body {
   overflow: hidden;
 }
 
+.date-select-group {
+  display: flex;
+  gap: 8px;
+}
+
+.date-select-group select {
+  flex: 1;
+  min-width: 0;
+}
+
 .field { margin-bottom: 18px; }
 .field-row {
   display: grid;
