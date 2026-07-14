@@ -210,6 +210,25 @@ tbody tr:hover { background: var(--purple-soft); }
   padding: 30px 0;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px 22px 4px;
+}
+
+.pag-info {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.pagination .btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .vagas-card { padding: 20px 0 8px; }
 .vagas-card .table-card-header { padding: 0 22px 14px; }
 
