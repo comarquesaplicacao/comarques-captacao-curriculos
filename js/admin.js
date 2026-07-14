@@ -1,6 +1,8 @@
 let todosCandidatos = [];
 let charts = {};
 let senhaSessao = '';
+let paginaAtual = 1;
+const ITENS_POR_PAGINA = 10;
 
 /* ---------- Login ---------- */
 const loginScreen = document.getElementById('login-screen');
@@ -90,7 +92,8 @@ document.getElementById('limpar-filtros').addEventListener('click', () => {
   aplicarFiltros();
 });
 
-function aplicarFiltros() {
+function aplicarFiltros(resetarPagina = true) {
+  if (resetarPagina) paginaAtual = 1;
   const busca = document.getElementById('f-busca').value.trim().toLowerCase();
   const cargo = document.getElementById('f-cargo').value;
   const estado = document.getElementById('f-estado').value;
@@ -151,14 +154,19 @@ function renderTabela(lista) {
   if (!lista.length) {
     corpo.innerHTML = '';
     vazio.hidden = false;
+    renderPaginacao(0);
     return;
   }
   vazio.hidden = true;
 
-  corpo.innerHTML = lista
-    .slice()
-    .sort((a, b) => new Date(b['Data Envio']) - new Date(a['Data Envio']))
-    .map(c => `
+  const ordenada = lista.slice().sort((a, b) => new Date(b['Data Envio']) - new Date(a['Data Envio']));
+  const totalPaginas = Math.max(1, Math.ceil(ordenada.length / ITENS_POR_PAGINA));
+  if (paginaAtual > totalPaginas) paginaAtual = totalPaginas;
+
+  const inicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
+  const paginaItens = ordenada.slice(inicio, inicio + ITENS_POR_PAGINA);
+
+  corpo.innerHTML = paginaItens.map(c => `
       <tr>
         <td>${formatarData(c['Data Envio'])}</td>
         <td>${c['Nome Completo'] || ''}</td>
@@ -174,7 +182,38 @@ function renderTabela(lista) {
         <td>${c['Link Currículo'] ? `<a href="${c['Link Currículo']}" target="_blank" class="cv-link">Abrir ↗</a>` : '—'}</td>
       </tr>
     `).join('');
+
+  renderPaginacao(ordenada.length, totalPaginas);
 }
+
+function renderPaginacao(totalItens, totalPaginas) {
+  const info = document.getElementById('pag-info');
+  const btnAnterior = document.getElementById('pag-anterior');
+  const btnProxima = document.getElementById('pag-proxima');
+
+  if (!totalItens) {
+    info.textContent = '';
+    btnAnterior.disabled = true;
+    btnProxima.disabled = true;
+    return;
+  }
+
+  info.textContent = `Página ${paginaAtual} de ${totalPaginas}`;
+  btnAnterior.disabled = paginaAtual <= 1;
+  btnProxima.disabled = paginaAtual >= totalPaginas;
+}
+
+document.getElementById('pag-anterior').addEventListener('click', () => {
+  if (paginaAtual > 1) {
+    paginaAtual--;
+    aplicarFiltros(false);
+  }
+});
+
+document.getElementById('pag-proxima').addEventListener('click', () => {
+  paginaAtual++;
+  aplicarFiltros(false);
+});
 
 function formatarData(valor) {
   if (!valor) return '';
