@@ -180,8 +180,16 @@ function renderTabela(lista) {
         <td>${c['Disponibilidade'] || ''}</td>
         <td>${c['Veículo Próprio'] || ''}</td>
         <td>${c['Link Currículo'] ? `<a href="${c['Link Currículo']}" target="_blank" class="cv-link">Abrir ↗</a>` : '—'}</td>
+        <td><button type="button" class="btn-editar" data-linha="${c._linha}">Editar</button></td>
       </tr>
     `).join('');
+
+  corpo.querySelectorAll('.btn-editar').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const candidato = ordenada.find(c => String(c._linha) === btn.dataset.linha);
+      if (candidato) abrirModalEdicao(candidato);
+    });
+  });
 
   renderPaginacao(ordenada.length, totalPaginas);
 }
@@ -442,10 +450,85 @@ document.getElementById('form-nova-vaga').addEventListener('submit', async (e) =
   }
 });
 
+/* ---------- Modal de edição de candidato ---------- */
+const modalOverlay = document.getElementById('modal-overlay');
+const formEditar = document.getElementById('form-editar-candidato');
+const editarMsg = document.getElementById('editar-msg');
+let linhaEmEdicao = null;
+
+function abrirModalEdicao(c) {
+  linhaEmEdicao = c._linha;
+  document.getElementById('ed-nome').value = c['Nome Completo'] || '';
+  document.getElementById('ed-email').value = c['Email'] || '';
+  document.getElementById('ed-telefone').value = c['Telefone'] || '';
+  document.getElementById('ed-nascimento').value = (c['Data Nascimento'] || '').toString().slice(0, 10);
+  document.getElementById('ed-estado').value = c['Estado'] || '';
+  document.getElementById('ed-cidade').value = c['Cidade'] || '';
+  document.getElementById('ed-bairro').value = c['Bairro'] || '';
+  document.getElementById('ed-cargo').value = c['Cargo Desejado'] || '';
+  document.getElementById('ed-escolaridade').value = c['Escolaridade'] || 'Médio completo';
+  document.getElementById('ed-pretensao').value = c['Pretensão Salarial'] || '';
+  document.getElementById('ed-disponibilidade').value = c['Disponibilidade'] || 'Imediata';
+  document.getElementById('ed-veiculo').value = c['Veículo Próprio'] || 'Sim';
+  editarMsg.className = 'form-msg';
+  editarMsg.textContent = '';
+  modalOverlay.hidden = false;
+}
+
+function fecharModalEdicao() {
+  modalOverlay.hidden = true;
+  linhaEmEdicao = null;
+}
+
+document.getElementById('modal-fechar').addEventListener('click', fecharModalEdicao);
+document.getElementById('modal-cancelar').addEventListener('click', fecharModalEdicao);
+modalOverlay.addEventListener('click', (e) => {
+  if (e.target === modalOverlay) fecharModalEdicao();
+});
+
+formEditar.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!linhaEmEdicao) return;
+
+  const campos = {
+    'Nome Completo': document.getElementById('ed-nome').value.trim(),
+    'Email': document.getElementById('ed-email').value.trim(),
+    'Telefone': document.getElementById('ed-telefone').value.trim(),
+    'Data Nascimento': document.getElementById('ed-nascimento').value,
+    'Estado': document.getElementById('ed-estado').value.trim().toUpperCase(),
+    'Cidade': document.getElementById('ed-cidade').value.trim(),
+    'Bairro': document.getElementById('ed-bairro').value.trim(),
+    'Cargo Desejado': document.getElementById('ed-cargo').value.trim(),
+    'Escolaridade': document.getElementById('ed-escolaridade').value,
+    'Pretensão Salarial': document.getElementById('ed-pretensao').value,
+    'Disponibilidade': document.getElementById('ed-disponibilidade').value,
+    'Veículo Próprio': document.getElementById('ed-veiculo').value
+  };
+
+  try {
+    const result = await chamarApi({ acao: 'atualizarCandidato', senha: senhaSessao, linha: linhaEmEdicao, campos });
+    if (result.ok) {
+      fecharModalEdicao();
+      const relogin = await chamarApi({ acao: 'listarCandidatos', senha: senhaSessao });
+      if (relogin.ok) {
+        todosCandidatos = relogin.candidatos || [];
+        montarFiltros();
+        aplicarFiltros(false);
+      }
+    } else {
+      editarMsg.className = 'form-msg is-visible is-error';
+      editarMsg.textContent = result.message || 'Erro ao salvar alterações.';
+    }
+  } catch (err) {
+    editarMsg.className = 'form-msg is-visible is-error';
+    editarMsg.textContent = 'Erro de conexão. Tente novamente.';
+  }
+});
+
 /* ---------- Export CSV ---------- */
 document.getElementById('exportar-csv').addEventListener('click', () => {
   if (!todosCandidatos.length) return;
-  const colunas = Object.keys(todosCandidatos[0]);
+  const colunas = Object.keys(todosCandidatos[0]).filter(c => c !== '_linha');
   const linhas = [colunas.join(';')];
   todosCandidatos.forEach(c => {
     linhas.push(colunas.map(col => `"${String(c[col] ?? '').replace(/"/g, "'")}"`).join(';'));
