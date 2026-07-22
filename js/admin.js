@@ -30,7 +30,7 @@ async function autenticar(senha) {
     const result = await resp.json();
 
     if (!result.ok) {
-      sessionStorage.removeItem('comarques_admin_senha');
+      localStorage.removeItem('comarques_admin_senha');
       loginMsg.textContent = result.message || 'Senha incorreta.';
       loginBtn.disabled = false;
       loginBtn.textContent = 'Entrar';
@@ -39,7 +39,7 @@ async function autenticar(senha) {
 
     todosCandidatos = result.candidatos || [];
     senhaSessao = senha;
-    sessionStorage.setItem('comarques_admin_senha', senha);
+    localStorage.setItem('comarques_admin_senha', senha);
     loginScreen.style.display = 'none';
     dashboardScreen.style.display = 'block';
     montarFiltros();
@@ -53,7 +53,7 @@ async function autenticar(senha) {
 }
 
 // Tenta restaurar a sessão automaticamente se já houver login nesta aba
-const senhaSalva = sessionStorage.getItem('comarques_admin_senha');
+const senhaSalva = localStorage.getItem('comarques_admin_senha');
 if (senhaSalva) {
   autenticar(senhaSalva);
 }
@@ -61,7 +61,7 @@ if (senhaSalva) {
 document.getElementById('logout-btn').addEventListener('click', () => {
   todosCandidatos = [];
   senhaSessao = '';
-  sessionStorage.removeItem('comarques_admin_senha');
+  localStorage.removeItem('comarques_admin_senha');
   dashboardScreen.style.display = 'none';
   loginScreen.style.display = 'flex';
   loginForm.reset();
