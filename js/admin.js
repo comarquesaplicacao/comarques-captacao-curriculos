@@ -11,10 +11,12 @@ const loginForm = document.getElementById('login-form');
 const loginBtn = document.getElementById('login-btn');
 const loginMsg = document.getElementById('login-msg');
 
-loginForm.addEventListener('submit', async (e) => {
+loginForm.addEventListener('submit', (e) => {
   e.preventDefault();
-  const senha = document.getElementById('senha').value;
+  autenticar(document.getElementById('senha').value);
+});
 
+async function autenticar(senha) {
   loginBtn.disabled = true;
   loginBtn.textContent = 'Verificando...';
   loginMsg.textContent = '';
@@ -28,6 +30,7 @@ loginForm.addEventListener('submit', async (e) => {
     const result = await resp.json();
 
     if (!result.ok) {
+      sessionStorage.removeItem('comarques_admin_senha');
       loginMsg.textContent = result.message || 'Senha incorreta.';
       loginBtn.disabled = false;
       loginBtn.textContent = 'Entrar';
@@ -36,6 +39,7 @@ loginForm.addEventListener('submit', async (e) => {
 
     todosCandidatos = result.candidatos || [];
     senhaSessao = senha;
+    sessionStorage.setItem('comarques_admin_senha', senha);
     loginScreen.style.display = 'none';
     dashboardScreen.style.display = 'block';
     montarFiltros();
@@ -46,11 +50,18 @@ loginForm.addEventListener('submit', async (e) => {
     loginBtn.disabled = false;
     loginBtn.textContent = 'Entrar';
   }
-});
+}
+
+// Tenta restaurar a sessão automaticamente se já houver login nesta aba
+const senhaSalva = sessionStorage.getItem('comarques_admin_senha');
+if (senhaSalva) {
+  autenticar(senhaSalva);
+}
 
 document.getElementById('logout-btn').addEventListener('click', () => {
   todosCandidatos = [];
   senhaSessao = '';
+  sessionStorage.removeItem('comarques_admin_senha');
   dashboardScreen.style.display = 'none';
   loginScreen.style.display = 'flex';
   loginForm.reset();
