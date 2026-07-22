@@ -152,6 +152,7 @@
                 <th>Disponibilidade</th>
                 <th>Veículo</th>
                 <th>Currículo</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody id="tabela-corpo"></tbody>
@@ -168,8 +169,105 @@
     </main>
   </div>
 
+  <!-- modal de edição -->
+  <div class="modal-overlay" id="modal-overlay" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Editar candidato</h3>
+        <button type="button" class="modal-close" id="modal-fechar">&times;</button>
+      </div>
+      <form id="form-editar-candidato">
+        <div class="field-row">
+          <div class="field">
+            <label for="ed-nome">Nome completo</label>
+            <input type="text" id="ed-nome">
+          </div>
+          <div class="field">
+            <label for="ed-email">Email</label>
+            <input type="email" id="ed-email">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="ed-telefone">Telefone</label>
+            <input type="tel" id="ed-telefone">
+          </div>
+          <div class="field">
+            <label for="ed-nascimento">Data de nascimento</label>
+            <input type="date" id="ed-nascimento">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="ed-estado">Estado</label>
+            <input type="text" id="ed-estado" maxlength="2" style="text-transform:uppercase;">
+          </div>
+          <div class="field">
+            <label for="ed-cidade">Cidade</label>
+            <input type="text" id="ed-cidade">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="ed-bairro">Bairro</label>
+            <input type="text" id="ed-bairro">
+          </div>
+          <div class="field">
+            <label for="ed-cargo">Cargo desejado</label>
+            <input type="text" id="ed-cargo">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="ed-escolaridade">Escolaridade</label>
+            <select id="ed-escolaridade">
+              <option>Fundamental incompleto</option>
+              <option>Fundamental completo</option>
+              <option>Médio incompleto</option>
+              <option>Médio completo</option>
+              <option>Superior incompleto</option>
+              <option>Superior completo</option>
+              <option>Pós-graduação</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="ed-pretensao">Pretensão salarial (R$)</label>
+            <input type="number" id="ed-pretensao" min="0" step="50">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="ed-disponibilidade">Disponibilidade</label>
+            <select id="ed-disponibilidade">
+              <option>Imediata</option>
+              <option>Em até 15 dias</option>
+              <option>Em até 30 dias</option>
+              <option>A combinar</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="ed-veiculo">Veículo próprio</label>
+            <select id="ed-veiculo">
+              <option>Sim</option>
+              <option>Não</option>
+            </select>
+          </div>
+        </div>
+        <p class="form-msg" id="editar-msg" role="status"></p>
+        <div class="step-actions">
+          <button type="button" class="btn btn-ghost" id="modal-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 </div>
 
+<script src="js/config.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
 <script src="js/config.js"></script>
 <script src="js/admin.js"></script>
 </body>
