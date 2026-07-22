@@ -295,6 +295,10 @@ tbody tr:hover { background: var(--purple-soft); }
   padding: 20px;
 }
 
+.modal-overlay[hidden] {
+  display: none;
+}
+
 .modal-card {
   background: var(--paper);
   border-radius: var(--radius);
