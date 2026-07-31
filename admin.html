@@ -42,33 +42,44 @@
 
     <main class="admin-wrap">
 
-      <!-- gerenciamento de vagas -->
-      <section class="card vagas-card">
-        <div class="table-card-header">
-          <h3>Vagas em aberto</h3>
-        </div>
+      <!-- abas -->
+      <div class="admin-tabs">
+        <button type="button" class="admin-tab is-active" data-tab="candidatos">Candidatos</button>
+        <button type="button" class="admin-tab" data-tab="vagas">Vagas</button>
+      </div>
 
-        <form id="form-nova-vaga" class="nova-vaga-form">
-          <input type="text" id="nova-vaga-titulo" placeholder="Título da nova vaga (ex: Auxiliar administrativo)" required>
-          <button type="submit" class="btn btn-primary">Adicionar vaga</button>
-        </form>
-        <p class="form-msg" id="vaga-msg" role="status"></p>
+      <!-- ABA: VAGAS -->
+      <div id="tab-vagas" class="tab-panel" hidden>
+        <section class="card vagas-card">
+          <div class="table-card-header">
+            <h3>Vagas em aberto</h3>
+          </div>
 
-        <div class="table-scroll">
-          <table id="tabela-vagas">
-            <thead>
-              <tr>
-                <th>Título</th>
-                <th>Status</th>
-                <th>Criada em</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="tabela-vagas-corpo"></tbody>
-          </table>
-          <p class="empty-state" id="vagas-empty-state" hidden>Nenhuma vaga cadastrada ainda.</p>
-        </div>
-      </section>
+          <form id="form-nova-vaga" class="nova-vaga-form">
+            <input type="text" id="nova-vaga-titulo" placeholder="Título da nova vaga (ex: Auxiliar administrativo)" required>
+            <button type="submit" class="btn btn-primary">Adicionar vaga</button>
+          </form>
+          <p class="form-msg" id="vaga-msg" role="status"></p>
+
+          <div class="table-scroll">
+            <table id="tabela-vagas">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Status</th>
+                  <th>Criada em</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="tabela-vagas-corpo"></tbody>
+            </table>
+            <p class="empty-state" id="vagas-empty-state" hidden>Nenhuma vaga cadastrada ainda.</p>
+          </div>
+        </section>
+      </div>
+
+      <!-- ABA: CANDIDATOS -->
+      <div id="tab-candidatos" class="tab-panel">
 
       <!-- resumo -->
       <section class="summary-row" id="summary-row"></section>
@@ -165,6 +176,8 @@
           <button type="button" class="btn btn-ghost" id="pag-proxima">Próxima →</button>
         </div>
       </section>
+
+      </div>
 
     </main>
   </div>
