@@ -52,7 +52,7 @@ async function autenticar(senha) {
   }
 }
 
-// Tenta restaurar a sessão automaticamente se já houver login nesta aba
+// Tenta restaurar a sessão automaticamente se já houver login salvo
 const senhaSalva = localStorage.getItem('comarques_admin_senha');
 if (senhaSalva) {
   autenticar(senhaSalva);
@@ -67,6 +67,16 @@ document.getElementById('logout-btn').addEventListener('click', () => {
   loginForm.reset();
   loginBtn.disabled = false;
   loginBtn.textContent = 'Entrar';
+});
+
+/* ---------- Abas ---------- */
+document.querySelectorAll('.admin-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const alvo = btn.dataset.tab;
+    document.querySelectorAll('.admin-tab').forEach(b => b.classList.toggle('is-active', b === btn));
+    document.getElementById('tab-candidatos').hidden = alvo !== 'candidatos';
+    document.getElementById('tab-vagas').hidden = alvo !== 'vagas';
+  });
 });
 
 /* ---------- Filtros ---------- */
@@ -156,7 +166,7 @@ function renderResumo(lista) {
   `;
 }
 
-/* ---------- Tabela ---------- */
+/* ---------- Tabela + paginação ---------- */
 function renderTabela(lista) {
   const corpo = document.getElementById('tabela-corpo');
   const vazio = document.getElementById('empty-state');
@@ -242,8 +252,6 @@ function formatarData(valor) {
 }
 
 /* ---------- Gráficos ---------- */
-const paletaRoxa = ['#6C4FD1', '#8B72DE', '#4B32A6', '#B4A2EA', '#3A2680', '#D6CDF0'];
-
 function destruir(id) {
   if (charts[id]) { charts[id].destroy(); delete charts[id]; }
 }
