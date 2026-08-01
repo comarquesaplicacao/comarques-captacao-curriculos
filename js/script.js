@@ -122,7 +122,6 @@ tabs.forEach(tab => {
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('arquivo');
 const fileNameEl = document.getElementById('file-name');
-const dropzoneContent = document.getElementById('dropzone-content');
 
 const MAX_FILE_MB = 10;
 
@@ -201,6 +200,7 @@ form.addEventListener('submit', async (e) => {
       bairro: form.bairro.value.trim(),
       dataNascimento: `${selectAno.value}-${selectMes.value}-${selectDia.value}`,
       cargoDesejado: form.cargoDesejado.value.trim(),
+      comoConheceu: form.comoConheceu.value,
       escolaridade: form.escolaridade.value,
       pretensaoSalarial: form.pretensaoSalarial.value,
       disponibilidade: form.disponibilidade.value,
