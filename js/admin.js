@@ -89,6 +89,7 @@ function montarFiltros() {
   preencherSelect('f-estado', opcoesUnicas('Estado'));
   preencherSelect('f-escolaridade', opcoesUnicas('Escolaridade'));
   preencherSelect('f-disponibilidade', opcoesUnicas('Disponibilidade'));
+  preencherSelect('f-origem', opcoesUnicas('Como Ficou Sabendo'));
 }
 
 function preencherSelect(id, opcoes) {
@@ -104,12 +105,12 @@ function preencherSelect(id, opcoes) {
   select.value = atual;
 }
 
-['f-busca', 'f-cargo', 'f-estado', 'f-escolaridade', 'f-disponibilidade', 'f-de', 'f-ate']
+['f-busca', 'f-cargo', 'f-estado', 'f-escolaridade', 'f-disponibilidade', 'f-origem', 'f-de', 'f-ate']
   .forEach(id => document.getElementById(id).addEventListener('input', aplicarFiltros));
 
 document.getElementById('limpar-filtros').addEventListener('click', () => {
   ['f-busca', 'f-de', 'f-ate'].forEach(id => document.getElementById(id).value = '');
-  ['f-cargo', 'f-estado', 'f-escolaridade', 'f-disponibilidade'].forEach(id => document.getElementById(id).value = '');
+  ['f-cargo', 'f-estado', 'f-escolaridade', 'f-disponibilidade', 'f-origem'].forEach(id => document.getElementById(id).value = '');
   aplicarFiltros();
 });
 
@@ -120,6 +121,7 @@ function aplicarFiltros(resetarPagina = true) {
   const estado = document.getElementById('f-estado').value;
   const escolaridade = document.getElementById('f-escolaridade').value;
   const disponibilidade = document.getElementById('f-disponibilidade').value;
+  const origem = document.getElementById('f-origem').value;
   const de = document.getElementById('f-de').value;
   const ate = document.getElementById('f-ate').value;
 
@@ -132,6 +134,7 @@ function aplicarFiltros(resetarPagina = true) {
     if (estado && c['Estado'] !== estado) return false;
     if (escolaridade && c['Escolaridade'] !== escolaridade) return false;
     if (disponibilidade && c['Disponibilidade'] !== disponibilidade) return false;
+    if (origem && c['Como Ficou Sabendo'] !== origem) return false;
     if (de && new Date(c['Data Envio']) < new Date(de)) return false;
     if (ate && new Date(c['Data Envio']) > new Date(ate + 'T23:59:59')) return false;
     return true;
@@ -199,6 +202,7 @@ function renderTabela(lista) {
         <td>${c['Pretensão Salarial'] ? 'R$ ' + c['Pretensão Salarial'] : ''}</td>
         <td>${c['Escolaridade'] || ''}</td>
         <td>${c['Disponibilidade'] || ''}</td>
+        <td>${c['Como Ficou Sabendo'] || ''}</td>
         <td>${c['Veículo Próprio'] || ''}</td>
         <td>${c['Link Currículo'] ? `<a href="${c['Link Currículo']}" target="_blank" class="cv-link">Abrir ↗</a>` : '—'}</td>
         <td><button type="button" class="btn-editar" data-linha="${c._linha}">Editar</button></td>
@@ -489,6 +493,7 @@ function abrirModalEdicao(c) {
   document.getElementById('ed-pretensao').value = c['Pretensão Salarial'] || '';
   document.getElementById('ed-disponibilidade').value = c['Disponibilidade'] || 'Imediata';
   document.getElementById('ed-veiculo').value = c['Veículo Próprio'] || 'Sim';
+  document.getElementById('ed-origem').value = c['Como Ficou Sabendo'] || 'WhatsApp';
   editarMsg.className = 'form-msg';
   editarMsg.textContent = '';
   modalOverlay.hidden = false;
@@ -521,7 +526,8 @@ formEditar.addEventListener('submit', async (e) => {
     'Escolaridade': document.getElementById('ed-escolaridade').value,
     'Pretensão Salarial': document.getElementById('ed-pretensao').value,
     'Disponibilidade': document.getElementById('ed-disponibilidade').value,
-    'Veículo Próprio': document.getElementById('ed-veiculo').value
+    'Veículo Próprio': document.getElementById('ed-veiculo').value,
+    'Como Ficou Sabendo': document.getElementById('ed-origem').value
   };
 
   try {
