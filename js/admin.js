@@ -256,6 +256,8 @@ function formatarData(valor) {
 }
 
 /* ---------- Gráficos ---------- */
+const paletaRoxa = ['#6C4FD1', '#8B72DE', '#4B32A6', '#B4A2EA', '#3A2680', '#D6CDF0'];
+
 function destruir(id) {
   if (charts[id]) { charts[id].destroy(); delete charts[id]; }
 }
@@ -265,6 +267,7 @@ function renderGraficos(lista) {
   renderGraficoIdade(lista);
   renderGraficoSalario(lista);
   renderGraficoPeriodo(lista);
+  renderGraficoOrigem(lista);
 }
 
 function renderGraficoCargo(lista) {
@@ -357,6 +360,38 @@ function renderGraficoPeriodo(lista) {
       }]
     },
     options: baseOptions(false)
+  });
+}
+
+function renderGraficoOrigem(lista) {
+  const contagem = {};
+  lista.forEach(c => {
+    const origem = c['Como Ficou Sabendo'];
+    if (origem) contagem[origem] = (contagem[origem] || 0) + 1;
+  });
+  const entradas = Object.entries(contagem).sort((a, b) => b[1] - a[1]);
+
+  destruir('origem');
+  charts.origem = new Chart(document.getElementById('chart-origem'), {
+    type: 'doughnut',
+    data: {
+      labels: entradas.map(e => e[0]),
+      datasets: [{
+        data: entradas.map(e => e[1]),
+        backgroundColor: paletaRoxa,
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { family: 'Inter', size: 11 }, boxWidth: 12, padding: 12 }
+        }
+      }
+    }
   });
 }
 
