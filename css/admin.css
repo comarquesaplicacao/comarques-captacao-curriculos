@@ -155,7 +155,7 @@
 /* ---------- Gráficos ---------- */
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: 16px;
   margin-bottom: 20px;
 }
@@ -167,7 +167,7 @@
   margin: 0 0 12px;
 }
 
-.chart-card canvas { max-height: 240px; }
+.chart-card canvas { max-height: 280px; }
 
 /* ---------- Tabela ---------- */
 .table-card { padding: 20px 0 8px; }
