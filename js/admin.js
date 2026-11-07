@@ -3,6 +3,22 @@ let charts = {};
 let senhaSessao = '';
 let paginaAtual = 1;
 const ITENS_POR_PAGINA = 10;
+let vagasCache = [];
+
+// Todo texto vindo de candidatos (ou da IA, que lê o currículo deles) é entrada
+// não confiável: sempre escapar antes de colocar em innerHTML.
+function esc(valor) {
+  return String(valor === undefined || valor === null ? '' : valor)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function linkSeguro(url) {
+  return /^https:\/\/(drive|docs)\.google\.com\//.test(String(url || '')) ? url : '';
+}
 
 /* ---------- Login ---------- */
 const loginScreen = document.getElementById('login-screen');
@@ -165,7 +181,7 @@ function renderResumo(lista) {
     <div class="summary-item"><span class="value">${total}</span><span class="label">Candidatos (filtro atual)</span></div>
     <div class="summary-item"><span class="value">${mediaSalarial ? 'R$ ' + mediaSalarial.toFixed(0) : '—'}</span><span class="label">Pretensão salarial média</span></div>
     <div class="summary-item"><span class="value">${mediaIdade ? mediaIdade.toFixed(0) + ' anos' : '—'}</span><span class="label">Idade média</span></div>
-    <div class="summary-item"><span class="value">${cargoTop ? cargoTop[0] : '—'}</span><span class="label">Cargo mais buscado</span></div>
+    <div class="summary-item"><span class="value">${cargoTop ? esc(cargoTop[0]) : '—'}</span><span class="label">Cargo mais buscado</span></div>
   `;
 }
 
@@ -192,20 +208,21 @@ function renderTabela(lista) {
 
   corpo.innerHTML = paginaItens.map(c => `
       <tr>
-        <td>${formatarData(c['Data Envio'])}</td>
-        <td>${c['Nome Completo'] || ''}</td>
-        <td>${c['Email'] || ''}<br><small>${c['Telefone'] || ''}</small></td>
-        <td>${c['Cidade'] || ''} / ${c['Estado'] || ''}</td>
-        <td>${c['Bairro'] || ''}</td>
-        <td>${c['Cargo Desejado'] || ''}</td>
-        <td>${c['Idade'] || ''}</td>
-        <td>${c['Pretensão Salarial'] ? 'R$ ' + c['Pretensão Salarial'] : ''}</td>
-        <td>${c['Escolaridade'] || ''}</td>
-        <td>${c['Disponibilidade'] || ''}</td>
-        <td>${c['Como Ficou Sabendo'] || ''}</td>
-        <td>${c['Veículo Próprio'] || ''}</td>
-        <td>${c['Link Currículo'] ? `<a href="${c['Link Currículo']}" target="_blank" class="cv-link">Abrir ↗</a>` : '—'}</td>
-        <td><button type="button" class="btn-editar" data-linha="${c._linha}">Editar</button></td>
+        <td>${esc(formatarData(c['Data Envio']))}</td>
+        <td>${esc(c['Nome Completo'])}</td>
+        <td>${esc(c['Email'])}<br><small>${esc(c['Telefone'])}</small></td>
+        <td>${esc(c['Cidade'])} / ${esc(c['Estado'])}</td>
+        <td>${esc(c['Bairro'])}</td>
+        <td>${esc(c['Cargo Desejado'])}</td>
+        <td>${esc(c['Idade'])}</td>
+        <td>${c['Pretensão Salarial'] ? 'R$ ' + esc(c['Pretensão Salarial']) : ''}</td>
+        <td>${esc(c['Escolaridade'])}</td>
+        <td>${esc(c['Disponibilidade'])}</td>
+        <td>${esc(c['Como Ficou Sabendo'])}</td>
+        <td>${esc(c['Veículo Próprio'])}</td>
+        <td>${linkSeguro(c['Link Currículo']) ? `<a href="${esc(c['Link Currículo'])}" target="_blank" rel="noopener" class="cv-link">Abrir ↗</a>` : '—'}</td>
+        <td>${celulaIA(c)}</td>
+        <td><button type="button" class="btn-editar" data-linha="${esc(c._linha)}">Editar</button></td>
       </tr>
     `).join('');
 
@@ -213,6 +230,13 @@ function renderTabela(lista) {
     btn.addEventListener('click', () => {
       const candidato = ordenada.find(c => String(c._linha) === btn.dataset.linha);
       if (candidato) abrirModalEdicao(candidato);
+    });
+  });
+
+  corpo.querySelectorAll('.btn-ia').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const candidato = ordenada.find(c => String(c._linha) === btn.dataset.linha);
+      if (candidato) abrirModalIA(candidato);
     });
   });
 
@@ -422,7 +446,10 @@ async function chamarApi(payload) {
 async function carregarVagas() {
   try {
     const result = await chamarApi({ acao: 'listarVagas', senha: senhaSessao });
-    if (result.ok) renderVagas(result.vagas || []);
+    if (result.ok) {
+      vagasCache = result.vagas || [];
+      renderVagas(vagasCache);
+    }
   } catch (err) {
     console.error('Erro ao carregar vagas', err);
   }
@@ -444,17 +471,21 @@ function renderVagas(vagas) {
     .sort((a, b) => new Date(b.dataCriacao) - new Date(a.dataCriacao))
     .map(v => `
       <tr>
-        <td>${v.titulo}</td>
+        <td>${esc(v.titulo)}</td>
+        <td><div class="cel-requisitos" title="${esc(v.requisitos)}">${v.requisitos ? esc(v.requisitos) : '<span class="ia-vazio">sem requisitos</span>'}</div></td>
         <td>
-          <select class="status-select status-${v.status}" data-id="${v.id}">
+          <select class="status-select status-${esc(v.status)}" data-id="${esc(v.id)}">
             <option value="Ativa" ${v.status === 'Ativa' ? 'selected' : ''}>Ativa</option>
             <option value="Inativa" ${v.status === 'Inativa' ? 'selected' : ''}>Inativa</option>
             <option value="Fechada" ${v.status === 'Fechada' ? 'selected' : ''}>Fechada</option>
             <option value="Cancelada" ${v.status === 'Cancelada' ? 'selected' : ''}>Cancelada</option>
           </select>
         </td>
-        <td>${formatarData(v.dataCriacao)}</td>
-        <td><button type="button" class="btn-excluir-vaga" data-id="${v.id}">Excluir</button></td>
+        <td>${esc(formatarData(v.dataCriacao))}</td>
+        <td>
+          <button type="button" class="btn-editar btn-req-vaga" data-id="${esc(v.id)}">Requisitos</button>
+          <button type="button" class="btn-excluir-vaga" data-id="${esc(v.id)}">Excluir</button>
+        </td>
       </tr>
     `).join('');
 
@@ -468,6 +499,13 @@ function renderVagas(vagas) {
       } catch (err) {
         alert('Erro ao atualizar status. Tente novamente.');
       }
+    });
+  });
+
+  corpo.querySelectorAll('.btn-req-vaga').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const vaga = vagasCache.find(v => String(v.id) === btn.dataset.id);
+      if (vaga) abrirModalRequisitos(vaga);
     });
   });
 
@@ -487,14 +525,16 @@ function renderVagas(vagas) {
 document.getElementById('form-nova-vaga').addEventListener('submit', async (e) => {
   e.preventDefault();
   const input = document.getElementById('nova-vaga-titulo');
+  const inputReq = document.getElementById('nova-vaga-requisitos');
   const vagaMsg = document.getElementById('vaga-msg');
   const titulo = input.value.trim();
   if (!titulo) return;
 
   try {
-    const result = await chamarApi({ acao: 'criarVaga', senha: senhaSessao, titulo });
+    const result = await chamarApi({ acao: 'criarVaga', senha: senhaSessao, titulo, requisitos: inputReq.value.trim() });
     if (result.ok) {
       input.value = '';
+      inputReq.value = '';
       vagaMsg.className = 'form-msg is-visible is-success';
       vagaMsg.textContent = 'Vaga adicionada!';
       carregarVagas();
@@ -585,10 +625,157 @@ formEditar.addEventListener('submit', async (e) => {
   }
 });
 
+/* ---------- Requisitos da vaga ---------- */
+const reqOverlay = document.getElementById('modal-req-overlay');
+const reqMsg = document.getElementById('req-msg');
+let vagaEmEdicaoId = null;
+
+function abrirModalRequisitos(vaga) {
+  vagaEmEdicaoId = vaga.id;
+  document.getElementById('modal-req-titulo').textContent = `Requisitos · ${vaga.titulo}`;
+  document.getElementById('req-texto').value = vaga.requisitos || '';
+  reqMsg.className = 'form-msg';
+  reqMsg.textContent = '';
+  reqOverlay.hidden = false;
+}
+
+function fecharModalRequisitos() {
+  reqOverlay.hidden = true;
+  vagaEmEdicaoId = null;
+}
+
+document.getElementById('modal-req-fechar').addEventListener('click', fecharModalRequisitos);
+document.getElementById('modal-req-cancelar').addEventListener('click', fecharModalRequisitos);
+reqOverlay.addEventListener('click', (e) => { if (e.target === reqOverlay) fecharModalRequisitos(); });
+
+document.getElementById('form-requisitos').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if (!vagaEmEdicaoId) return;
+  try {
+    const result = await chamarApi({
+      acao: 'atualizarRequisitosVaga',
+      senha: senhaSessao,
+      id: vagaEmEdicaoId,
+      requisitos: document.getElementById('req-texto').value.trim()
+    });
+    if (result.ok) {
+      fecharModalRequisitos();
+      carregarVagas();
+    } else {
+      reqMsg.className = 'form-msg is-visible is-error';
+      reqMsg.textContent = result.message || 'Erro ao salvar os requisitos.';
+    }
+  } catch (err) {
+    reqMsg.className = 'form-msg is-visible is-error';
+    reqMsg.textContent = 'Erro de conexão. Tente novamente.';
+  }
+});
+
+/* ---------- Análise do currículo com IA ---------- */
+const iaOverlay = document.getElementById('modal-ia-overlay');
+const iaConteudo = document.getElementById('ia-conteudo');
+const iaMsg = document.getElementById('ia-msg');
+const iaBtnAnalisar = document.getElementById('ia-analisar');
+let candidatoIA = null;
+
+function celulaIA(c) {
+  if (!c._arquivoId) return '—';
+  const a = c._analise;
+  const linha = esc(c._linha);
+  if (!a) return `<button type="button" class="btn-ia ia-pendente" data-linha="${linha}">Analisar</button>`;
+  if (a.status === 'ok') return `<button type="button" class="btn-ia ia-ok" data-linha="${linha}">Ver análise</button>`;
+  return `<button type="button" class="btn-ia ia-falhou" data-linha="${linha}">Ver erro</button>`;
+}
+
+function abrirModalIA(c) {
+  candidatoIA = c;
+  document.getElementById('ia-titulo').textContent = `Análise com IA · ${c['Nome Completo'] || ''}`;
+  iaMsg.className = 'form-msg';
+  iaMsg.textContent = '';
+  iaBtnAnalisar.disabled = false;
+  renderAnaliseIA(c);
+  iaOverlay.hidden = false;
+}
+
+function fecharModalIA() {
+  iaOverlay.hidden = true;
+  candidatoIA = null;
+}
+
+function renderAnaliseIA(c) {
+  const a = c._analise;
+
+  if (!a) {
+    iaConteudo.innerHTML = '<p class="ia-vazio">Este currículo ainda não foi analisado. Se a análise automática estiver ligada, o resultado aparece em poucos minutos. Você também pode clicar em "Analisar agora".</p>';
+    iaBtnAnalisar.textContent = 'Analisar agora';
+    return;
+  }
+
+  iaBtnAnalisar.textContent = 'Analisar de novo';
+
+  if (a.status !== 'ok') {
+    iaConteudo.innerHTML = `<p class="ia-erro">${esc(a.erro || 'Não foi possível analisar este currículo.')}</p>`;
+    return;
+  }
+
+  const habilidades = (a.habilidades || []).length
+    ? `<div class="ia-chips">${a.habilidades.map(h => `<span class="ia-chip">${esc(h)}</span>`).join('')}</div>`
+    : '<p class="ia-vazio">Não informado.</p>';
+  const atencao = (a.pontosAtencao || []).length
+    ? `<ul>${a.pontosAtencao.map(p => `<li>${esc(p)}</li>`).join('')}</ul>`
+    : '<p class="ia-vazio">Nada a destacar.</p>';
+  const anos = (a.anosExperiencia !== '' && a.anosExperiencia !== null && a.anosExperiencia !== undefined)
+    ? ` (cerca de ${esc(a.anosExperiencia)} ${Number(a.anosExperiencia) === 1 ? 'ano' : 'anos'})`
+    : '';
+
+  iaConteudo.innerHTML = `
+    <div class="ia-bloco"><h4>Resumo</h4><p>${esc(a.resumo)}</p></div>
+    <div class="ia-bloco"><h4>Formação</h4><p>${esc(a.formacao || 'Não informado')}</p></div>
+    <div class="ia-bloco"><h4>Experiência${anos}</h4><p>${esc(a.experiencia || 'Não informado')}</p></div>
+    <div class="ia-bloco"><h4>Habilidades</h4>${habilidades}</div>
+    <div class="ia-bloco"><h4>Pontos de atenção</h4>${atencao}</div>
+    <p class="ia-rodape">Gerado por IA em ${esc(formatarData(a.dataAnalise))}. Pode conter erros: confira sempre o currículo original antes de decidir.</p>`;
+}
+
+document.getElementById('ia-fechar').addEventListener('click', fecharModalIA);
+document.getElementById('ia-cancelar').addEventListener('click', fecharModalIA);
+iaOverlay.addEventListener('click', (e) => { if (e.target === iaOverlay) fecharModalIA(); });
+
+iaBtnAnalisar.addEventListener('click', async () => {
+  if (!candidatoIA) return;
+  const candidato = candidatoIA;
+  const rotulo = iaBtnAnalisar.textContent;
+
+  iaBtnAnalisar.disabled = true;
+  iaBtnAnalisar.textContent = 'Analisando...';
+  iaMsg.className = 'form-msg is-visible is-success';
+  iaMsg.textContent = 'Lendo o currículo, pode levar alguns segundos...';
+
+  try {
+    const result = await chamarApi({ acao: 'analisarCandidato', senha: senhaSessao, linha: candidato._linha });
+    if (result.ok) {
+      candidato._analise = result.analise;
+      iaMsg.className = 'form-msg';
+      iaMsg.textContent = '';
+      if (candidatoIA === candidato) renderAnaliseIA(candidato);
+      aplicarFiltros(false);
+    } else {
+      iaMsg.className = 'form-msg is-visible is-error';
+      iaMsg.textContent = result.message || 'Erro ao analisar o currículo.';
+      iaBtnAnalisar.textContent = rotulo;
+    }
+  } catch (err) {
+    iaMsg.className = 'form-msg is-visible is-error';
+    iaMsg.textContent = 'Erro de conexão. Tente novamente.';
+    iaBtnAnalisar.textContent = rotulo;
+  }
+  iaBtnAnalisar.disabled = false;
+});
+
 /* ---------- Export CSV ---------- */
 document.getElementById('exportar-csv').addEventListener('click', () => {
   if (!todosCandidatos.length) return;
-  const colunas = Object.keys(todosCandidatos[0]).filter(c => c !== '_linha');
+  const colunas = Object.keys(todosCandidatos[0]).filter(c => !c.startsWith('_'));
   const linhas = [colunas.join(';')];
   todosCandidatos.forEach(c => {
     linhas.push(colunas.map(col => `"${String(c[col] ?? '').replace(/"/g, "'")}"`).join(';'));
