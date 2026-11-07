@@ -396,3 +396,111 @@ tbody tr:hover { background: var(--purple-soft); }
   .nova-vaga-form { flex-direction: column; }
   .modal-card { padding: 20px 18px 22px; }
 }
+
+/* ---------- Campos de texto longo (requisitos) ---------- */
+textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1.5px solid #E3DEF2;
+  border-radius: 9px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+  background: var(--bg);
+  resize: vertical;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px var(--purple-tint);
+}
+
+.nova-vaga-form { align-items: flex-start; }
+
+.nova-vaga-campos {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.nova-vaga-campos input { flex: none; width: 100%; }
+
+.cel-requisitos {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--ink-soft);
+}
+
+/* ---------- Coluna "Análise IA" ---------- */
+.btn-ia {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1.5px solid;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-ia:hover { filter: brightness(0.96); }
+.btn-ia.ia-ok { color: var(--success); border-color: var(--success); background: var(--success-bg); }
+.btn-ia.ia-pendente { color: var(--purple-deep); border-color: var(--purple-tint); background: var(--purple-soft); }
+.btn-ia.ia-falhou { color: var(--danger); border-color: var(--danger); background: var(--danger-bg); }
+
+/* ---------- Modal da análise ---------- */
+.ia-bloco { margin-bottom: 16px; }
+
+.ia-bloco h4 {
+  font-family: 'Sora', sans-serif;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  margin: 0 0 6px;
+}
+
+.ia-bloco p { margin: 0; font-size: 14px; line-height: 1.6; }
+.ia-bloco ul { margin: 0; padding-left: 18px; font-size: 14px; line-height: 1.6; }
+
+.ia-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.ia-chip {
+  background: var(--purple-soft);
+  color: var(--purple-deep);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.ia-vazio { color: var(--ink-soft); font-size: 13.5px; }
+
+.ia-erro {
+  background: var(--danger-bg);
+  color: var(--danger);
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 10px 14px;
+  border-radius: 9px;
+  margin: 0;
+}
+
+.ia-rodape {
+  font-size: 12px;
+  color: var(--ink-soft);
+  border-top: 1px solid var(--purple-tint);
+  padding-top: 10px;
+  margin: 8px 0 0;
+}
+
+@media (max-width: 560px) {
+  .nova-vaga-form { align-items: stretch; }
+}
