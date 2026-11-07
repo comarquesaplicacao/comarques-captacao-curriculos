@@ -56,7 +56,10 @@
           </div>
 
           <form id="form-nova-vaga" class="nova-vaga-form">
-            <input type="text" id="nova-vaga-titulo" placeholder="Título da nova vaga (ex: Auxiliar administrativo)" required>
+            <div class="nova-vaga-campos">
+              <input type="text" id="nova-vaga-titulo" placeholder="Título da nova vaga (ex: Auxiliar administrativo)" required>
+              <textarea id="nova-vaga-requisitos" rows="3" maxlength="4000" placeholder="Requisitos e perfil desejado (opcional). A IA usa este texto para ranquear os candidatos. Ex: ensino médio completo, experiência com atendimento, CNH B, disponibilidade para escala 6x1."></textarea>
+            </div>
             <button type="submit" class="btn btn-primary">Adicionar vaga</button>
           </form>
           <p class="form-msg" id="vaga-msg" role="status"></p>
@@ -66,6 +69,7 @@
               <thead>
                 <tr>
                   <th>Título</th>
+                  <th>Requisitos</th>
                   <th>Status</th>
                   <th>Criada em</th>
                   <th></th>
@@ -172,6 +176,7 @@
                 <th>Origem</th>
                 <th>Veículo</th>
                 <th>Currículo</th>
+                <th>Análise IA</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -299,12 +304,44 @@
     </div>
   </div>
 
-</div>
+  <!-- modal: análise com IA -->
+  <div class="modal-overlay" id="modal-ia-overlay" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="ia-titulo">Análise com IA</h3>
+        <button type="button" class="modal-close" id="ia-fechar">&times;</button>
+      </div>
+      <div id="ia-conteudo"></div>
+      <p class="form-msg" id="ia-msg" role="status"></p>
+      <div class="step-actions">
+        <button type="button" class="btn btn-ghost" id="ia-cancelar">Fechar</button>
+        <button type="button" class="btn btn-primary" id="ia-analisar">Analisar agora</button>
+      </div>
+    </div>
+  </div>
 
-<script src="js/config.js"></script>
-<script src="js/admin.js"></script>
-</body>
-</html>
+  <!-- modal: requisitos da vaga -->
+  <div class="modal-overlay" id="modal-req-overlay" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-req-titulo">Requisitos da vaga</h3>
+        <button type="button" class="modal-close" id="modal-req-fechar">&times;</button>
+      </div>
+      <form id="form-requisitos">
+        <div class="field">
+          <label for="req-texto">Requisitos e perfil desejado</label>
+          <textarea id="req-texto" rows="9" maxlength="4000" placeholder="Escreva o que a vaga exige: escolaridade, experiência, habilidades, CNH, disponibilidade..."></textarea>
+        </div>
+        <p class="form-msg" id="req-msg" role="status"></p>
+        <div class="step-actions">
+          <button type="button" class="btn btn-ghost" id="modal-req-cancelar">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar requisitos</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
 
 <script src="js/config.js"></script>
 <script src="js/admin.js"></script>
